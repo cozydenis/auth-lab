@@ -2,7 +2,8 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import session from 'express-session';
-import passport from './passport';   
+import passport from './passport'; 
+import userRoutes from './routes/users';  
 import { prisma } from './prisma';
 import { ENV } from './env';
 import authRoutes from './routes/auth';
@@ -62,6 +63,7 @@ app.get('/debug/session', (req, res) => {
 // initialize passport (must come after session middleware)
 app.use(passport.initialize());
 app.use(passport.session());
+app.use('/api/users', userRoutes);
 // Auth routes
 app.use('/auth', authRoutes);
 

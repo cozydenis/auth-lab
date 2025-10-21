@@ -11,3 +11,6 @@ export const loginSchema = z.object({
     password: z.string().min(1),
 });
 
+export const nicknameSchema = z.object({
+    nickname: z.string().trim().max(50),
+});
