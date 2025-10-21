@@ -2,8 +2,10 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import session from 'express-session';
+import passport from './passport';   
 import { prisma } from './prisma';
 import { ENV } from './env';
+import authRoutes from './routes/auth';
 
 
 
@@ -55,16 +57,21 @@ app.get('/debug/users', async (_req, res) => {
  */
 app.get('/debug/session', (req, res) => {
     req.session.views = (req.session.views || 0) + 1;
-    res.json({ message: 'Session alive', views: req.session.views });
+    res.json({ message: 'Session alive', views: req.session.views, userId: req.session.userId ?? null });
 });
-
+// initialize passport (must come after session middleware)
+app.use(passport.initialize());
+app.use(passport.session());
+// Auth routes
+app.use('/auth', authRoutes);
 
 app.use((err: any, _req: any, res: any, _next: any) => {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
 
-}
-);
+});
+
+
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => console.log(`API on http://localhost:${PORT}`));
 
